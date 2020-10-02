@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Video</title>
+    <link href="https://vjs.zencdn.net/7.7.5/video-js.css" rel="stylesheet" />
+    <style>
+      html {
+        background: #000;
+      }
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <video
+      id="my-video"
+      class="video-js vjs-default-skin vjs-16-9"
+      controls
+      preload="auto"
+      data-setup="{}"
+    >
+      <source src="videoplayback.mp4" type="video/mp4" />
+    </video>
+
+    <script src="https://vjs.zencdn.net/7.7.5/video.js"></script>
+
+    <script>
+      let host = window.location.host;
+      var socket = new WebSocket("ws://ВАШ_IP:8889");
+      const id = uuidv4();
+      let recieved = false;
+      socket.onopen = function (event) {
+        socket.send(id);
+      };
+      var myPlayer = videojs("my-video");
+      myPlayer.on("pause", function () {
+        if (!recieved) {
+          socket.send(JSON.stringify(["pause"]));
+        }
+        recieved = false;
+      });
+
+      myPlayer.on("play", function () {
+        if (!recieved) {
+          socket.send(JSON.stringify(["play", myPlayer.currentTime()]));
+        }
+        recieved = false;
+      });
+
+      socket.onmessage = (event) => {
+        if (event.data == "connected") {
+          return;
+        }
+        let data = JSON.parse(event.data);
+        switch (data[0]) {
+          case "play":
+            recieved = true;
+            myPlayer.currentTime(data[1]);
+            myPlayer.play();
+            break;
+          case "pause":
+            recieved = true;
+            myPlayer.pause();
+            break;
+          default:
+            break;
+        }
+      };
+
+      function uuidv4() {
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+          /[xy]/g,
+          function (c) {
+            var r = (Math.random() * 16) | 0,
+              v = c == "x" ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+          }
+        );
+      }
+    </script>
+  </body>
+</html>
