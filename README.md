@@ -13,15 +13,15 @@
 9) Вы прекрасны! Можете заходить на ваш_ip:8080 и смотреть видео синхронно.
 
 
-#### Как сменить видео
+### Как сменить видео
 В файле `video.html` в 24 строке исправьте `src` на ваше видео.
 
-#### Проксирование с помощью nginx
+### Проксирование с помощью nginx
 В конфиг добавьте
 ```
 location = / {
          if ($http_upgrade = "websocket") {
-             proxy_pass http://194.99.20.36:8889;
+             proxy_pass http://ваш_ip:8889;
          }
          proxy_http_version 1.1;
          proxy_set_header Upgrade websocket;
@@ -30,7 +30,7 @@ location = / {
      
 ```
 
-#### Возможные проблемы
+### Возможные проблемы
 Если вы в `video.html` в 31 строке указываете домен, то есть проксируете с nginx на ws, то там может быть параметр
 `proxy_read_timeout`, который по умолчанию `proxy_read_timeout 60s`;
 Контекст: http, server, location
