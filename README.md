@@ -2,8 +2,6 @@
 Синхронный просмотр видео
 
 #Установка
-
-#### Если у Вас нет своего VPS/VDS
 1) `git clone https://github.com/antofliberty/syncvid`
 2) Открыть порт 8889 и 8080 на роутере или если вы устанавливаете на VPS, тогда `sudo ufw allow 8889/tcp` и `sudo ufw allow 8080/tcp`
 3) `cd wss`
